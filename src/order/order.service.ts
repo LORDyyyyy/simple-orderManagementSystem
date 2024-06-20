@@ -129,9 +129,11 @@ export class OrderService {
       });
     }
 
-    return await this.databaseService.cartItem.deleteMany({
+    await this.databaseService.cartItem.deleteMany({
       where: { cartId },
     });
+
+    return { orderId: order.orderId };
   }
 
   /**
