@@ -13,6 +13,9 @@ import { CartService } from './cart.service';
 import { CreateCartDto } from './dto/create-cart.dto';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { RemoveCartItemDto } from './dto/remove-cart-item.dto';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Cart')
 @Controller('api/cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}

@@ -14,7 +14,9 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApplyCouponDto } from 'src/coupon/dto/apply-coupon.dto';
 import { CouponService } from 'src/coupon/coupon.service';
 import { $Enums, Prisma } from '@prisma/client';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Orders')
 @Controller('api/orders')
 export class OrderController {
   constructor(
