@@ -10,7 +10,7 @@ It allows users to manage their carts, place orders, view order details, and app
 - [API Documentation](#api-documentation)
 - [Additional Features](#additional-features)
 - [Dummy Data](#dummy-data)
-- [Postman Collection](#-postman-collection)
+- [Postman Collection](#postman-collection)
 
 ## Prerequisites
 
@@ -133,8 +133,10 @@ Here are the dummy data that has been added to the tables `User`, `Product`, and
 > Note: the first 5 coupons are expired.
 
 ## Postman Collection
+
 A Postman collection is included to facilitate API testing.
 To use it:
+
 - Import the [OMS.postman_collection.json](./OMS.postman_collection.json) file into Postman.
 - Ensure your local server is running.
 - Execute the API requests defined in the collection to test the endpoints.
