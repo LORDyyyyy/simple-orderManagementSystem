@@ -30,6 +30,20 @@ git clone https://github.com/LORDyyyyy/simple-orderManagementSystem
 npm install
 ```
 
+Next you need to change the Database connection URL in the [.env](./.env) file
+
+```bash
+DATABASE_URL="postgresql://USERNAME:PASSWORD@HOST:PORT/DB_NAME?schema=public"
+```
+
+You can leave everything the same as it is in the file except the `USERNAME` and the `PASSWORD`.
+
+Also you can change the Database provider from PostgreSQL to any other DBMS.
+See [Prisma Documentation - Data sources](https://www.prisma.io/docs/orm/prisma-schema/overview/data-sources).
+Don't forget to change the provider name in [prisma/schema.prisma](./prisma/schema.prisma).
+
+---
+
 Building the application and the Database:
 
 ```bash
@@ -51,18 +65,6 @@ npm run start:all
 ```
 
 Be careful from running this command multiple times, you will add the dummy data more than once.
-
-Next you need to change the Database connection URL in the [.env](./.env) file
-
-```bash
-DATABASE_URL="postgresql://USERNAME:PASSWORD@HOST:PORT/DB_NAME?schema=public"
-```
-
-You can leave everything the same as it is in the file except the `USERNAME` and the `PASSWORD`.
-
-Also you can change the Database provider from PostgreSQL to any other DBMS.
-See [Prisma Documentation - Data sources](https://www.prisma.io/docs/orm/prisma-schema/overview/data-sources).
-Don't forget to change the provider name in [prisma/schema.prisma](./prisma/schema.prisma).
 
 ## API Documentation
 
