@@ -11,6 +11,14 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  /**
+   * GET /api/users/:id/orders
+   * Retrieves the orders for a user with the specified ID.
+   *
+   * @param id - The ID of the user.
+   * @returns A Promise that resolves to the orders of the user.
+   * @throws BadRequestException if there is an error retrieving the orders.
+   */
   @Get(':id/orders')
   async getOrders(@Param('id', ParseIntPipe) id: number) {
     const orders = await this.userService.getOrders(id);

@@ -22,6 +22,14 @@ export class OrderController {
     private readonly couponService: CouponService,
   ) {}
 
+  /**
+   * GET /api/orders/:id
+   * Retrieves a single order by its ID.
+   *
+   * @param id - The ID of the order to retrieve.
+   * @returns A Promise that resolves to the retrieved order.
+   * @throws BadRequestException if the order is not found or an error occurs.
+   */
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const order = await this.orderService.findOne(id);
@@ -33,6 +41,14 @@ export class OrderController {
     return order;
   }
 
+  /**
+   * POST /api/orders
+   * Create a new order based on the user's cart.
+   *
+   * @param createOrderDto - The data for creating the order.
+   * @returns The created order.
+   * @throws BadRequestException if there is an error creating the order.
+   */
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto) {
     const order = await this.orderService.create(createOrderDto);
@@ -44,6 +60,15 @@ export class OrderController {
     return order;
   }
 
+  /**
+   * PUT /api/orders/:id/status
+   * Updates the status of an order.
+   *
+   * @param id - The ID of the order to update.
+   * @param updateOrderDto - The DTO containing the updated order information.
+   * @returns The updated order.
+   * @throws BadRequestException if there is an error updating the order.
+   */
   @Put(':id/status')
   async updateStatus(
     @Param('id', ParseIntPipe) id: number,
@@ -63,6 +88,14 @@ export class OrderController {
     return updatedOrder;
   }
 
+  /**
+   * POST /api/orders/apply-coupon
+   * Apply a coupon to an order.
+   *
+   * @param applyCouponDto - The DTO containing the coupon information.
+   * @returns A message indicating the discount applied.
+   * @throws BadRequestException if there is an error applying the coupon or retrieving the order.
+   */
   @Post('/apply-coupon')
   async applyCoupon(@Body() applyCouponDto: ApplyCouponDto) {
     const coupon = await this.couponService.getCoupun(applyCouponDto);

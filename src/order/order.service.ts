@@ -13,6 +13,13 @@ export class OrderService {
     private readonly cartService: CartService,
   ) {}
 
+  /**
+   * Finds an order by its ID.
+   *
+   * @param orderId - The ID of the order to find.
+   * @returns An object containing the order details, buyer address, and order items.
+   *          If the order is not found, an error object is returned.
+   */
   async findOne(orderId: number) {
     const order = await this.databaseService.order.findFirst({
       where: { orderId },
@@ -41,6 +48,16 @@ export class OrderService {
     return { ...order, buyerAddress, items: orderItems };
   }
 
+  /**
+   * Creates a new order.
+   * If the user is not found, an error object is returned.
+   * If the cart is empty, an error object is returned.
+   * If there is not enough stock for a product, an array of error objects contains the out-of-stock products is returned.
+   * If the order is created successfully, the cart items are deleted.
+   *
+   * @param createOrderDto - The data for creating the order.
+   * @returns A promise that resolves to the result of the operation.
+   */
   async create(createOrderDto: CreateOrderDto) {
     const user = await this.databaseService.user.findUnique({
       where: { userId: createOrderDto.userId },
@@ -117,6 +134,13 @@ export class OrderService {
     });
   }
 
+  /**
+   * Updates the status of an order.
+   *
+   * @param orderId - The ID of the order to update.
+   * @param updateOrderDto - The data to update the order with.
+   * @returns A promise that resolves to the updated order or an error object.
+   */
   async updateStatus(orderId: number, updateOrderDto: UpdateOrderDto) {
     const order = await this.databaseService.order.findFirst({
       where: { orderId },
@@ -133,6 +157,17 @@ export class OrderService {
     });
   }
 
+  /**
+   * Applies a coupon to an order and updates the order's total amount.
+   * If the coupon is already applied to the order, an error message is returned.
+   * If the order does not exist, an error message is returned.
+   * If the order is already delivered, an error message is returned.
+   * If the order is free of charges, an error message is returned.
+   *
+   * @param applyCouponDto - The DTO containing the order ID.
+   * @param coupon - The coupon to be applied.
+   * @returns The updated order with the new total amount, or an error message.
+   */
   async applyCoupon(
     applyCouponDto: ApplyCouponDto,
     coupon: Prisma.CouponUncheckedCreateInput,

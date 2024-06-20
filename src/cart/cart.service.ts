@@ -10,7 +10,12 @@ import { UpdateCartDto } from './dto/update-cart.dto';
 export class CartService {
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async findOne(userId: number) {
+  /**
+   * Finds the cart details for a given user.
+   * @param userId - The ID of the user.
+   * @returns An object containing the cart details, including cart count, full price, cart items count, and products in cart.
+   */
+  async findCart(userId: number) {
     const user = await this.databaseService.user.findUnique({
       where: { userId },
     });
@@ -56,6 +61,7 @@ export class CartService {
    * Creates a new cart item or updates an existing one.
    * If the update parameter is set to true, it will only update the quantity of an existing cart item.
    * If the update parameter is set to false (default), it will create a new cart item if it does not exist.
+   *
    * @param createCartDto - The DTO (Data Transfer Object) containing the information to create a cart item.
    * @param update - A boolean indicating whether to update an existing cart item or not.
    * @returns The created or updated cart item, or an error message if the user or product was not found, or if there is not enough stock.
@@ -119,6 +125,7 @@ export class CartService {
 
   /**
    * Removes a cart item from the user's cart.
+   *
    * @param removeCartItemDto - The DTO containing the user ID and product ID of the cart item to be removed.
    * @returns A promise that resolves to the deleted cart item or an error object if the user or product is not found.
    */

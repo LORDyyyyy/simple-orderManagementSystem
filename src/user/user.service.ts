@@ -9,6 +9,12 @@ export class UserService {
     private readonly orderService: OrderService,
   ) {}
 
+  /**
+   * Retrieves the orders for a given user.
+   *
+   * @param userId - The ID of the user.
+   * @returns A promise that resolves to an array of orders.
+   */
   async getOrders(userId: number) {
     const user = await this.databaseService.user.findUnique({
       where: { userId },
