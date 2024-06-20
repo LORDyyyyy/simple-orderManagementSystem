@@ -11,11 +11,16 @@ import {
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
-import { $Enums } from '@prisma/client';
+import { ApplyCouponDto } from 'src/coupon/dto/apply-coupon.dto';
+import { CouponService } from 'src/coupon/coupon.service';
+import { $Enums, Prisma } from '@prisma/client';
 
 @Controller('api/orders')
 export class OrderController {
-  constructor(private readonly orderService: OrderService) {}
+  constructor(
+    private readonly orderService: OrderService,
+    private readonly couponService: CouponService,
+  ) {}
 
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number) {
@@ -56,5 +61,25 @@ export class OrderController {
     }
 
     return updatedOrder;
+  }
+
+  @Post('/apply-coupon')
+  async applyCoupon(@Body() applyCouponDto: ApplyCouponDto) {
+    const coupon = await this.couponService.getCoupun(applyCouponDto);
+
+    if (Object.keys(coupon).includes('error')) {
+      throw new BadRequestException((coupon as any).error.message);
+    }
+
+    const order = await this.orderService.applyCoupon(
+      applyCouponDto,
+      coupon as Prisma.CouponUncheckedCreateInput,
+    );
+
+    if (Object.keys(order).includes('error')) {
+      throw new BadRequestException((order as any).error.message);
+    }
+
+    return (coupon as any).discount;
   }
 }

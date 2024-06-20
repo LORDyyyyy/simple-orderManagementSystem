@@ -3,6 +3,8 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { CartService } from 'src/cart/cart.service';
+import { ApplyCouponDto } from 'src/coupon/dto/apply-coupon.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class OrderService {
@@ -126,5 +128,49 @@ export class OrderService {
       data: { status: updateOrderDto.status },
       where: { orderId },
     });
+  }
+
+  async applyCoupon(
+    applyCouponDto: ApplyCouponDto,
+    coupon: Prisma.CouponUncheckedCreateInput,
+  ) {
+    const order = await this.databaseService.order.findFirst({
+      where: { orderId: applyCouponDto.orderId },
+    });
+
+    if (!order) return { error: { message: 'Order does not exist' } };
+
+    if (order.status === 'DELIVERED')
+      return { error: { message: 'Order is already Delivered' } };
+
+    if (Math.floor(order.total) === 0)
+      return { error: { message: 'Order is free of charges' } };
+
+    const userId = order.userId;
+
+    const isAlreadyApplied =
+      await this.databaseService.coupunOrderUser.findFirst({
+        where: { userId, orderId: order.orderId, couponId: coupon.couponId },
+      });
+
+    if (isAlreadyApplied)
+      return { error: { message: 'Coupun is already applied to this order' } };
+
+    const discount = coupon.discount as number;
+
+    const updatedOrder = await this.databaseService.order.update({
+      data: { total: order.total * ((100 - discount) / 100) },
+      where: { orderId: applyCouponDto.orderId },
+    });
+
+    await this.databaseService.coupunOrderUser.create({
+      data: {
+        userId,
+        orderId: order.orderId,
+        couponId: coupon.couponId,
+      },
+    });
+
+    return updatedOrder;
   }
 }

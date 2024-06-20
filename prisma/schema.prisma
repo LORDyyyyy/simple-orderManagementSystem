@@ -18,6 +18,8 @@ model User {
   orders Order[]
 
   cart Cart?
+
+  CoupunOrderUser CoupunOrderUser[]
 }
 
 model Order {
@@ -30,6 +32,8 @@ model Order {
   userId Int
 
   items OrderItem[]
+
+  CoupunOrderUser CoupunOrderUser[]
 }
 
 model OrderItem {
@@ -79,11 +83,27 @@ model CartItem {
   productId Int
 }
 
-model Copon {
-  coponId   Int      @id @default(autoincrement())
+model Coupon {
+  couponId  Int      @id @default(autoincrement())
   code      String   @unique
-  discount  Float
+  discount  Decimal
+  expireAt  DateTime
   createdAt DateTime @default(now())
+
+  CoupunOrderUser CoupunOrderUser[]
+}
+
+model CoupunOrderUser {
+  user   User @relation(fields: [userId], references: [userId])
+  userId Int  @unique
+
+  order   Order @relation(fields: [orderId], references: [orderId])
+  orderId Int
+
+  coupun   Coupon @relation(fields: [couponId], references: [couponId])
+  couponId Int
+
+  @@id([userId, orderId, couponId])
 }
 
 enum Status {
