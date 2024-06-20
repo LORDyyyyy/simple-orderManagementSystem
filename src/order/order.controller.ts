@@ -80,6 +80,8 @@ export class OrderController {
       throw new BadRequestException((order as any).error.message);
     }
 
-    return (coupon as any).discount;
+    return {
+      message: `Applied ${(coupon as any).discount}% of`,
+    };
   }
 }
