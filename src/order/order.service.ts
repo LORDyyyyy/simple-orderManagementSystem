@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
-// import { UpdateOrderDto } from './dto/update-order.dto';
+import { UpdateOrderDto } from './dto/update-order.dto';
 import { DatabaseService } from 'src/database/database.service';
 import { CartService } from 'src/cart/cart.service';
 
@@ -18,7 +18,25 @@ export class OrderService {
 
     if (!order) return { error: { message: 'Order was not found' } };
 
-    return order;
+    const orderItems = await this.databaseService.orderItem.findMany({
+      where: { orderId },
+    });
+
+    for (const item of orderItems) {
+      const product = await this.databaseService.product.findFirst({
+        where: { productId: item.productId },
+      });
+
+      item['totalPrice'] = item.quantity * product.price;
+    }
+
+    const buyerAddress = (
+      await this.databaseService.user.findFirst({
+        where: { userId: order.userId },
+      })
+    ).address;
+
+    return { ...order, buyerAddress, items: orderItems };
   }
 
   async create(createOrderDto: CreateOrderDto) {
@@ -29,19 +47,84 @@ export class OrderService {
     if (!user) return { error: { message: 'User was not found' } };
 
     const userId = createOrderDto.userId;
-
     const cart = await this.cartService.getOrCeateEmptyCard(userId);
-
     const cartId = cart.cartId;
 
     const cartItems = await this.databaseService.cartItem.findMany({
       where: { cartId },
     });
 
-    console.log(cartItems);
+    if (cartItems.length === 0)
+      return { error: { message: 'Your cart is empty' } };
 
-    return {};
+    let fullPrice = 0.0;
+    const productsInCart = [];
+    const productsInCartOutOfStock = [];
+
+    for await (const item of cartItems) {
+      const product = await this.databaseService.product.findFirst({
+        where: { productId: item.productId },
+      });
+
+      if (!this.cartService.checkEnoughStock(product, item.quantity)) {
+        productsInCartOutOfStock.push(product);
+        continue;
+      }
+
+      fullPrice += product.price * item.quantity;
+      productsInCart.push(product);
+    }
+
+    if (productsInCartOutOfStock.length !== 0) {
+      return productsInCartOutOfStock.map((product) => {
+        return {
+          currentStock: product.stock,
+          productId: product.productId,
+          wantedQuantity: cartItems.find(
+            (e) => e.productId === product.productId,
+          ).quantity,
+          message: `There is not enoughe stock for the Product with ID ${product.productId}`,
+        };
+      });
+    }
+
+    const order = await this.databaseService.order.create({
+      data: {
+        userId,
+        total: fullPrice,
+      },
+    });
+
+    for (const item in cartItems) {
+      await this.databaseService.orderItem.create({
+        data: {
+          quantity: cartItems[item].quantity,
+          orderId: order.orderId,
+          productId: cartItems[item].productId,
+        },
+      });
+
+      await this.databaseService.product.update({
+        data: { stock: productsInCart[item].stock - cartItems[item].quantity },
+        where: { productId: cartItems[item].productId },
+      });
+    }
+
+    return await this.databaseService.cartItem.deleteMany({
+      where: { cartId },
+    });
   }
 
-  // update(updateOrderDto: UpdateOrderDto) {}
+  async updateStatus(orderId: number, updateOrderDto: UpdateOrderDto) {
+    const order = await this.databaseService.order.findFirst({
+      where: { orderId },
+    });
+
+    if (!order) return { error: { message: 'Order was not found' } };
+
+    return this.databaseService.order.update({
+      data: { status: updateOrderDto.status },
+      where: { orderId },
+    });
+  }
 }

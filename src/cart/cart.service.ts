@@ -36,6 +36,7 @@ export class CartService {
       cartItemsCount += item.quantity;
 
       product['quantity'] = item.quantity;
+      product['fullPrice'] = product.price * item.quantity;
 
       delete product['stock'];
       delete product['createdAt'];
@@ -151,7 +152,7 @@ export class CartService {
    * @param wanted - The desired quantity of the product.
    * @returns A boolean indicating whether there is enough stock.
    */
-  private checkEnoughStock(product: Product, wanted: number): boolean {
+  checkEnoughStock(product: Product, wanted: number): boolean {
     return !(wanted > product.stock);
   }
 

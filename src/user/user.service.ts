@@ -1,33 +1,29 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { UserModule } from './user.module';
-import { CreateUserDto } from './dto/create-user.dto';
+import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { OrderService } from 'src/order/order.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    private readonly databaseService: DatabaseService,
+    private readonly orderService: OrderService,
+  ) {}
 
-  async findAll(): Promise<UserModule[]> {
-    return this.databaseService.user.findMany();
-  }
-
-  async findOne(userId: number): Promise<UserModule> {
-    return this.databaseService.user.findUnique({
+  async getOrders(userId: number) {
+    const user = await this.databaseService.user.findUnique({
       where: { userId },
     });
-  }
 
-  async create(user: CreateUserDto): Promise<UserModule> {
-    const isEmailTaker = await this.databaseService.user.findUnique({
-      where: { email: user.email },
+    if (!user) return { error: { message: 'User was not found' } };
+
+    const orders = await this.databaseService.order.findMany({
+      where: { userId },
     });
 
-    if (isEmailTaker) {
-      throw new BadRequestException('Email already taken');
-    }
-
-    return this.databaseService.user.create({
-      data: user,
-    });
+    return Promise.all(
+      orders.map(async (order) => {
+        return await this.orderService.findOne(order.orderId);
+      }),
+    );
   }
 }
