@@ -14,7 +14,7 @@ import { UpdateOrderDto } from './dto/update-order.dto';
 import { ApplyCouponDto } from 'src/coupon/dto/apply-coupon.dto';
 import { CouponService } from 'src/coupon/coupon.service';
 import { $Enums, Prisma } from '@prisma/client';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBody, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('Orders')
 @Controller('api/orders')
@@ -33,6 +33,15 @@ export class OrderController {
    * @throws BadRequestException if the order is not found or an error occurs.
    */
   @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'The order with the provided ID.',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'An error occurred while retrieving the order. Can be due to the order does not exist.',
+  })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const order = await this.orderService.findOne(id);
 
@@ -52,6 +61,17 @@ export class OrderController {
    * @throws BadRequestException if there is an error creating the order.
    */
   @Post()
+  @ApiBody({ type: CreateOrderDto })
+  @ApiResponse({
+    status: 201,
+    description: 'The order has been successfully created.',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'An error occurred while creating the order. Can be due to the user does not exist | \
+      the cart is empty | there is not enough stock for a product.',
+  })
   async create(@Body() createOrderDto: CreateOrderDto) {
     const order = await this.orderService.create(createOrderDto);
 
@@ -72,6 +92,17 @@ export class OrderController {
    * @throws BadRequestException if there is an error updating the order.
    */
   @Put(':id/status')
+  @ApiBody({ type: UpdateOrderDto })
+  @ApiResponse({
+    status: 200,
+    description: 'The order status has been successfully updated.',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'An error occurred while updating the order. Can be due to the order does not exist | \
+      the order has already been delivered.',
+  })
   async updateStatus(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateOrderDto: UpdateOrderDto,
@@ -99,6 +130,18 @@ export class OrderController {
    * @throws BadRequestException if there is an error applying the coupon or retrieving the order.
    */
   @Post('/apply-coupon')
+  @ApiBody({ type: ApplyCouponDto })
+  @ApiResponse({
+    status: 200,
+    description: 'The coupon has been successfully applied.',
+  })
+  @ApiResponse({
+    status: 400,
+    description:
+      'An error occurred while applying the coupon. Can be due to the coupon does not exist | \
+      the coupon has expired | the user already used the coupon | \
+      the order has already been delivered | the order is free of charges.',
+  })
   async applyCoupon(@Body() applyCouponDto: ApplyCouponDto) {
     const coupon = await this.couponService.getCoupun(applyCouponDto);
 
