@@ -23,7 +23,7 @@ export class UpdateCartDto {
   productId: number;
 
   @ApiProperty({
-    example: '2',
+    example: '6',
     required: true,
     description: 'The new wanted quantity of the Product',
     type: 'integer',
