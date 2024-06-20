@@ -1,7 +1,8 @@
 {
 	"info": {
 		"_postman_id": "676f3387-e8a5-4aec-888d-13f1c254273d",
-		"name": "Order Management System",
+		"name": "OMS",
+		"description": "API Endpoints for the Order Management System Application.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
 		"_exporter_id": "33667100"
 	},
@@ -10,38 +11,11 @@
 			"name": "Users",
 			"item": [
 				{
-					"name": "Users",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": "{{baseURL}}/api/users"
-					},
-					"response": []
-				},
-				{
-					"name": "Users",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"ahmed.ali3@outlook.com\",\n    \"name\": \"Ahmed\",\n    \"password\": \"asd\",\n    \"address\": \"11 Nasr Street\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "{{baseURL}}/api/users"
-					},
-					"response": []
-				},
-				{
 					"name": "Orders",
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{apiURL}}/users/1/orders"
+						"url": "{{apiURL}}/users/2/orders"
 					},
 					"response": []
 				}
@@ -55,7 +29,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{apiURL}}/cart/5"
+						"url": "{{apiURL}}/cart/1"
 					},
 					"response": []
 				},
@@ -66,7 +40,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userId\": 5,\n    \"productId\": 7,\n    \"quantity\": 30\n}",
+							"raw": "{\n    \"userId\": 10,\n    \"productId\": 10,\n    \"quantity\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -123,7 +97,7 @@
 					"request": {
 						"method": "GET",
 						"header": [],
-						"url": "{{apiURL}}/orders/9"
+						"url": "{{apiURL}}/orders/1"
 					},
 					"response": []
 				},
@@ -134,7 +108,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"userId\": 5\n}",
+							"raw": "{\n    \"userId\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -159,7 +133,7 @@
 								}
 							}
 						},
-						"url": "{{apiURL}}/orders/1/status"
+						"url": "{{apiURL}}/orders/2/status"
 					},
 					"response": []
 				},
@@ -170,7 +144,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"SUMMER25\",\n    \"orderId\": 8\n}",
+							"raw": "{\n    \"code\": \"FALL10\",\n    \"orderId\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
