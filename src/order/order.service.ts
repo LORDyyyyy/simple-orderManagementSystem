@@ -124,6 +124,9 @@ export class OrderService {
 
     if (!order) return { error: { message: 'Order was not found' } };
 
+    if (order.status === 'DELIVERED')
+      return { error: { message: 'The order has already been delivered' } };
+
     return this.databaseService.order.update({
       data: { status: updateOrderDto.status },
       where: { orderId },
