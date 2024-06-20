@@ -102,7 +102,7 @@ export class OrderService {
           wantedQuantity: cartItems.find(
             (e) => e.productId === product.productId,
           ).quantity,
-          message: `There is not enoughe stock for the Product with ID ${product.productId}`,
+          message: `There is not enough stock for the Product with ID ${product.productId}`,
         };
       });
     }
