@@ -71,7 +71,7 @@ Be careful from running this command multiple times, you will add the dummy data
 API endpoints are documented using Swagger. Once the server is running locally, access the documentation at:
 
 ```bash
-http://localhost:3000/api/api-docs
+http://localhost:3000/api-docs
 ```
 
 ## Additional Features
